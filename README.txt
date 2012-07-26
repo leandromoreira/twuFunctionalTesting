@@ -6,3 +6,5 @@ gradle idea
 
 To run the application:
 gradle jettyRun
+
+It works
