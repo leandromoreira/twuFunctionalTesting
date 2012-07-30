@@ -19,6 +19,7 @@ public class WebdriveTest {
 	public void shouldPlaceAnOrder(){
 		WebDriver browser = new FirefoxDriver();
 		browser.get("http://localhost:8080/twuFunctionalTesting/");
+		
 		browser.findElement(By.partialLinkText("Place an Order")).click();
 
 		WebElement name = browser.findElement(By.id("name_field"));
@@ -30,9 +31,12 @@ public class WebdriveTest {
 		WebElement combo = browser.findElement(By.id("items"));
 		browser.findElement(By.id("submitButton")).click();
 		
-		String sourcePage = browser.getPageSource();
+		String orderMsg = browser.findElement(By.className("header")).getText();
+		assertEquals("Order Saved!", orderMsg);
+		
 		browser.quit();
-		assertTrue(sourcePage.contains("Order Saved!"));
 	}
+	
+
 
 }
