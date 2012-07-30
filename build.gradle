@@ -34,8 +34,8 @@ dependencies {
     testCompile 'junit:junit:4.8.1',
                 'org.springframework:spring-test:3.1.1.RELEASE',
                 'org.mockito:mockito-all:1.9.0',
-		'org.seleniumhq.webdriver:webdriver-selenium:0.9.7376',
-		'org.seleniumhq.webdriver:webdriver-firefox:0.9.7376',
-		'org.seleniumhq.webdriver:webdriver-htmlunit:0.9.7376',
-		'org.seleniumhq.webdriver:webdriver-chrome:0.9.7376'
+				'org.seleniumhq.selenium:selenium-java:2.25.0',
+				'org.seleniumhq.selenium:selenium-support:2.25.0',
+				'org.seleniumhq.selenium:selenium-htmlunit-driver:2.25.0',
+				'org.seleniumhq.selenium:selenium-firefox-driver:2.25.0'
 }
