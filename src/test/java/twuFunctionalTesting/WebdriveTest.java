@@ -37,6 +37,33 @@ public class WebdriveTest {
 		browser.quit();
 	}
 	
+	@Test
+	public void shouldCalculateTax(){
+		WebDriver browser = new FirefoxDriver();
+		browser.get("http://localhost:8080/twuFunctionalTesting/");
+		
+		browser.findElement(By.partialLinkText("Place an Order")).click();
+		
+		browser.findElement(By.id("name_field")).sendKeys("Batman");
 
+		browser.findElement(By.id("email_field")).sendKeys("batman@gotham.com");
+		
+		browser.findElements(By.name("item")).get(3).click();
+		
+		//Would use code bellow to dynamically calculate total price:
+		
+		//WebElement price = browser.findElement(By.id("current_price"));
+		//WebElement tax = browser.findElement(By.id("current_tax"));
+		//WebElement total = browser.findElement(By.id("current_total"));
+		
+		browser.findElement(By.id("submitButton")).click();
+		
+		String total = browser.findElement(By.name("total")).getAttribute("value");
+
+		assertEquals("60.5", total);
+		
+		browser.quit();
+		
+	}
 
 }
