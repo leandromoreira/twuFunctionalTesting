@@ -11,88 +11,96 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.By;
 
-//change the name of test to something MORE meaningful 
+//the next big change I would do would be the PageObject pattern :P
+//altouhg I don't like the work it´s a good ideia check it out http://code.google.com/p/selenium/wiki/PageObjects
 public class PlaceOrderTest {
-	//since we will always use a driver(browser) then I will create a attribute to hold it in order to avoid object creation and let the code clear
-	private WebDriver browser;
-	//this is the root url (shared between tests) to our application
-	private String placeOrderUrl = "http://localhost:8080/twuFunctionalTesting/";
 	
-	//all the work we need to do before each @Test execute themself, things like open file, connection...
+	//for sure the class itself should be place in a separated file
+	public static class PlaceOrderPage{
+		private final WebDriver browser;
+		public PlaceOrderPage(final WebDriver browser){
+			this.browser =  browser;
+		}
+		
+		public void goToHome(){
+			browser.get("http://localhost:8080/twuFunctionalTesting/");
+		}
+		
+		public void exit(){
+			browser.quit();
+		}
+		
+		public void clickAtPlaceAnOrder(){
+			browser.findElement(By.partialLinkText("Place an Order")).click();	
+		}
+		
+		public void fillNameWith(final String valeu){
+			browser.findElement(By.id("name_field")).sendKeys(value);
+		}
+
+		public void fillEmailWith(final String valeu){
+			browser.findElement(By.id("email_field")).sendKeys(value);
+		}
+		
+		public void submit(){
+			browser.findElement(By.id("submitButton")).click();
+		}
+		
+		public String getTextByClass(final String className){
+			page.getValueByClass()browser.findElement(By.className("header")).getText();
+		}
+		
+		public String getValueByName(final String className){
+			page.getValueByClass()browser.findElement(By.className("header")).getText();
+		}
+		
+		public void select(int order){
+			browser.findElements(By.name("item")).get(order).click();
+		}
+	}
+	
+	//one of the great benefits is that we can eliminate selenium or any other web automate framework
+	//so if you want to change its internal you can do that easily 
+	//btw when you do this pro, you usually create a super Page object full of common "page" methods
+	//and you can create a "default" driver in order to avoid the Browser dependency as well
 	@Before
 	public void setup(){
-		browser = new FirefoxDriver();
+		page = new PlaceOrderPage(new FirefoxDriver());
 	}
 	
-	//all the work we need to do after each @Test... things like close file, connection...
 	@After
 	public void down(){
-		browser.quit();
-	}
-
-	//the list of benefits that we can have dealing with code with no duplication is long
-	// * reuse (you can create another tests with different values only using the existing methods)
-	// * extend (since you have a single point doing something it is easy to extend [try to imagine extending something like clickAtSubmmitButton if the button changed, if you didn't have a single point you should correct the entire code])
-	@Test
-	public void shouldPlaceAnOrder(){
-		access(placeOrderUrl);
-		clickAtLinkWithTextLike("Place an Order");
-		
-		fillFieldNameWith("Batman");
-		fillFieldEmailWith("batman@gotham.com");
-		
-		clickAtSubmitButton();
-		
-		String orderMsg = browser.findElement(By.className("header")).getText();
-		assertEquals("Order Saved!", orderMsg);
+		page.exit();
 	}
 	
-
+	@Test
+	public void shouldPlaceAnOrder(){
+		page.goToHome();
+		page.clickAtPlaceAnOrder();
+		
+		page.fillNameWith("Batman");
+		page.fillEmailWith("batman@gotham.com");
+		
+		page.submit();
+		
+		String orderMsg = page.getTextByClass("header");
+		assertEquals("Order Saved!", orderMsg);
+	}
 	
 	@Test
 	public void shouldCalculateTax(){
 		int FOURTH_ITEM = 3;
-		access(placeOrderUrl);
-		clickAtLinkWithTextLike("Place an Order");
+		page.goToHome();
+		page.clickAtPlaceAnOrder();
 		
-		fillFieldNameWith("Batman");
-		fillFieldEmailWith("batman@gotham.com");
+		page.fillNameWith("Batman");
+		page.fillEmailWith("batman@gotham.com");
 		
-		//hee the thing is legibility to code
-		select(FOURTH_ITEM);
+		page.select(FOURTH_ITEM);
 		
-		clickAtSubmitButton();
+		page.submit();
 		
-		String total = browser.findElement(By.name("total")).getAttribute("value");
+		String total =  page.getValueByName("total");
 		assertEquals("60.5", total);
-	}
-
-	//always in order TO AVOID CODE DUPLICATION we create method (or function ... ) that will be used in shared places
-	private access(String url){
-		browser.get(url);
-	}
-	
-	//still on things to AVOID CODE DUPLICATION and now you can see the name of method more easy to read and understand
-	public void clickAtLinkWithTextLike(String text){
-		browser.findElement(By.partialLinkText(text)).click();
-	}
-	
-	//still avoiding code duplication
-	private void fillFieldNameWith(String value){
-		WebElement name = browser.findElement(By.id("name_field"));
-		name.sendKeys(value);		
-	}
-
-	private void fillFieldEmailWith(String value){
-		WebElement email = browser.findElement(By.id("email_field"));
-		email.sendKeys(value);
-	}
-	
-	private void clickAtSubmitButton(){
-		browser.findElement(By.id("submitButton")).click();
-	}
-	
-	public void select(int order){
-		browser.findElements(By.name("item")).get(order).click();
 	}
 }
